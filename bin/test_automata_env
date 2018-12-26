@@ -1,0 +1,86 @@
+#!/bin/sh
+
+#
+# Set environment variables for test implementation
+#
+export TEST_ROOT=$(pwd)
+export RESOURCES=$(dirname $BIN_DIR)/robotframework/resources
+
+#
+# Source .env file if it exists
+#
+DOT_ENV_FILE=$TEST_ROOT/.env
+if [ -f $DOT_ENV_FILE ]; then
+  . $DOT_ENV_FILE
+fi
+
+#
+# Set environment variables
+#
+if [ -z "$TEST_RESULTS" ]; then
+  export TEST_RESULTS=$TEST_ROOT/results
+fi
+if [ -z "$TEST_RESOURCES" ]; then
+  export TEST_RESOURCES=$TEST_ROOT/resources
+fi
+if [ -z "$TEST_CASES" ]; then
+  export TEST_CASES=$TEST_ROOT/cases
+fi
+if [ -z "$UA_FILE" ]; then
+  UA_FILE=$TEST_ROOT/ua.csv
+fi
+
+#
+# Check diretories
+#
+if [ ! -d "$TEST_CASES" ]; then
+  echo "No test cases exist on '$TEST_CASES'"
+  exit 1
+fi
+
+#
+# Check if browserstack auth information is set if it isn't local mode
+#
+if [ $LOCAL_MODE == false ]; then
+  if [ -z "$BROWSER_STACK_USERNAME" ]; then
+    echo "You have to specify environment variable BROWSER_STACK_USERNAME. Use .env file if you need."
+    exit 1
+  fi
+
+  if [ -z "$BROWSER_STACK_ACCESS_KEY" ]; then
+    echo "You have to specify environment variable BROWSER_STACK_ACCESS_KEY. Use .env file if you need."
+    exit 1
+  fi
+fi
+
+#
+# Check if ua.csv to define testing user agents
+#
+if [ $LOCAL_MODE == false ]; then
+  if [ ! -f $UA_FILE ]; then
+    echo "You have to define the testing user agents on $UA_FILE"
+    exit 1
+  fi
+  #
+  # Verify all data
+  #
+  UA_OS=()
+  UA_OS_VERSION=()
+  UA_BROWSER=()
+  UA_BROWSER_VERSION=()
+  while read LINE; do
+    IFS_ORG="$IFS"
+    IFS=$'\n'
+    BROWSER_DATA=(`python $BIN_DIR/bs_validate_browser.py "$LINE"`)
+    if [ $? -ne 0 ]; then
+      echo 'Defined user agent below is not supported by browserstack. See the full list on "https://www.browserstack.com/list-of-browsers-and-platforms/automate"'
+      echo $LINE
+      exit 1
+    fi
+    IFS="$IFS_ORG"
+    export UA_OS=("${UA_OS[@]}" "${BROWSER_DATA[0]}")
+    export UA_OS_VERSION=("${UA_OS_VERSION[@]}" "${BROWSER_DATA[1]}")
+    export UA_BROWSER=("${UA_BROWSER[@]}" "${BROWSER_DATA[2]}")
+    export UA_BROWSER_VERSION=("${UA_BROWSER_VERSION[@]}" "${BROWSER_DATA[3]}")
+  done < $UA_FILE
+fi

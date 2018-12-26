@@ -1,0 +1,31 @@
+#!/bin/bash
+
+#
+# Prepare and validate test environment
+#
+export LOCAL_MODE=true
+BIN_DIR=$(cd $(dirname $0); pwd)
+. $BIN_DIR/test_automata_env
+
+#
+# Parse options
+#
+export BROWSER=chrome
+while getopts "b:" OPT; do
+  case $OPT in
+    b)  export BROWSER=$OPTARG
+        ;;
+    h)  exit_with_usage
+        ;;
+    \?) exit_with_usage
+        ;;
+  esac
+done
+shift $((OPTIND - 1))
+TARGET_CASE=$TEST_CASES
+[ $# -ne 0 ] && TARGET_CASE="$@"
+
+#
+# Run test
+#
+robot --outputdir $TEST_RESULTS $TARGET_CASE
