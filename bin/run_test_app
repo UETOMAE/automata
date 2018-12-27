@@ -38,9 +38,9 @@ for ((i=0; i<${#DEVICE_OS[@]}; i++)) {
   #
   # Generate build name
   # 
-  export BROWSER_STACK_BUILD_NAME="$(cat /dev/urandom | env LC_CTYPE=C tr -cd 'a-f0-9' | head -c 32)"
-  BUILD_RESULTS=$TEST_RESULTS/$BROWSER_STACK_BUILD_NAME
-  mkdir -p $BUILD_RESULTS
+  export BROWSER_STACK_BUILD_NAME="${PROJECT_NAME}__${OS} ${OS_VERSION} ${DEVICE}__$(cat /dev/urandom | env LC_CTYPE=C tr -cd 'a-f0-9' | head -c 8)"
+  BUILD_RESULTS="$TEST_RESULTS/$BROWSER_STACK_BUILD_NAME"
+  mkdir -p "$BUILD_RESULTS"
   #
   # Run test
   #
@@ -51,18 +51,18 @@ for ((i=0; i<${#DEVICE_OS[@]}; i++)) {
   echo "  Device:     ${DEVICE}"
   echo "  Device ID:  ${DEVICE_ID}"
   echo "  Build Name: ${BROWSER_STACK_BUILD_NAME}"
-  robot --outputdir $BUILD_RESULTS $TARGET_CASE
+  robot --outputdir "$BUILD_RESULTS" $TARGET_CASE
   #
   # Get public url to BrowserStack result page and generate html to results dir
   #
   IFS_ORG="$IFS"
   IFS=$'\n'
-  BS_SESSION_INFO=(`python $BIN_DIR/bs_app_public_url.py $BROWSER_STACK_BUILD_NAME`)
+  BS_SESSION_INFO=(`python $BIN_DIR/bs_app_public_url.py "$BROWSER_STACK_BUILD_NAME"`)
   IFS="$IFS_ORG"
   BS_SESSION_FILE=$BUILD_RESULTS/browserstack.html
-  echo "<html><body><ul>" > $BS_SESSION_FILE
+  echo "<html><body><ul>" > "$BS_SESSION_FILE"
   for ((si=0; si<${#BS_SESSION_INFO[@]}; si+=2)) {
-    echo "<li><a href=\"${BS_SESSION_INFO[$si+1]}\" target=\"_blank\">${BS_SESSION_INFO[$si]}</a></li>" >> $BS_SESSION_FILE
+    echo "<li><a href=\"${BS_SESSION_INFO[$si+1]}\" target=\"_blank\">${BS_SESSION_INFO[$si]}</a></li>" >> "$BS_SESSION_FILE"
   }
-  echo "</ul></body></html>" >> $BS_SESSION_FILE
+  echo "</ul></body></html>" >> "$BS_SESSION_FILE"
 }

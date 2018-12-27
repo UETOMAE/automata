@@ -17,6 +17,10 @@ if [ ! -f $CONFIG_FILE ]; then
   exit 1
 fi
 . $CONFIG_FILE
+if [ -z "$PROJECT_NAME" ]; then
+  echo "Missing mandatory environment variable PROJECT_NAME."
+  exit 1
+fi
 if [ "$TARGET_TYPE" != "web" ] && [ "$TARGET_TYPE" != "app" ]; then
   echo "TARGET_TYPE should be 'web' or 'app'."
   exit 1
