@@ -15,4 +15,4 @@ res = urllib2.urlopen(req)
 browsers = json.loads(res.read())
 
 for browser in browsers:
-    print '"%s", "%s", "%s"' % (browser['os'], browser['os_version'], browser['device'])
+    print '"%s","%s","%s"' % (browser['os'], browser['os_version'], browser['device'])

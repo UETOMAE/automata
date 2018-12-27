@@ -8,5 +8,5 @@ Open Automata Application
   ...               platformName=%{OS}  platformVersion=%{OS_VERSION}
   ...               deviceName=%{DEVICE}
   ...               app=%{APP_URL}
-  ...               unicodeKeyboard=true      newCommandTimeout=10000
+  ...               unicodeKeyboard=true      newCommandTimeout=10000   autoGrantPermissions=true
   ...               build=%{BROWSER_STACK_BUILD_NAME}  name=${case_name}

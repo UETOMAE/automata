@@ -1,5 +1,9 @@
 #!/bin/bash
 
 BIN_DIR=$(cd $(dirname $0); pwd)
-. $BIN_DIR/test_automata_env
+export TEST_ROOT=$(pwd)
+DOT_ENV_FILE=$TEST_ROOT/.env
+if [ -f $DOT_ENV_FILE ]; then
+  . $DOT_ENV_FILE
+fi
 python $BIN_DIR/bs_list_devices.py
