@@ -1,0 +1,5 @@
+#!/bin/bash
+
+BIN_DIR=$(cd $(dirname $0); pwd)
+. $BIN_DIR/test_automata_env
+python $BIN_DIR/bs_list_devices.py
