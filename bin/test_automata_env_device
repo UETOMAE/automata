@@ -1,0 +1,32 @@
+#!/bin/sh
+
+#
+# Check if ua.csv to define testing user agents
+#
+[ -z "$DEVICE_FILE" ] && DEVICE_FILE=$TEST_ROOT/device.csv
+if [ $LOCAL_MODE == false ]; then
+  if [ ! -f $DEVICE_FILE ]; then
+    echo "You have to define the testing devices on $DEVICE_FILE"
+    exit 1
+  fi
+  #
+  # Verify all data
+  #
+  DEVICE_OS=()
+  DEVICE_OS_VERSION=()
+  DEVICE_NAME=()
+  while read LINE; do
+    IFS_ORG="$IFS"
+    IFS=$'\n'
+    DEVICE_DATA=(`python $BIN_DIR/bs_validate_device.py "$LINE"`)
+    if [ $? -ne 0 ]; then
+      echo 'Defined device below is not supported by browserstack. See the full list on "https://www.browserstack.com/list-of-browsers-and-platforms/app_automate"'
+      echo $LINE
+      exit 1
+    fi
+    IFS="$IFS_ORG"
+    export DEVICE_OS=("${DEVICE_OS[@]}" "${DEVICE_DATA[0]}")
+    export DEVICE_OS_VERSION=("${DEVICE_OS_VERSION[@]}" "${DEVICE_DATA[1]}")
+    export DEVICE_NAME=("${DEVICE_NAME[@]}" "${DEVICE_DATA[2]}")
+  done < $DEVICE_FILE
+fi

@@ -1,0 +1,68 @@
+#!/bin/bash
+
+#
+# Parse options
+#
+while getopts "t:" OPT; do
+  case $OPT in
+    t)  TARGET_DEVICE=$OPTARG
+        ;;
+    h)  exit_with_usage
+        ;;
+    \?) exit_with_usage
+        ;;
+  esac
+done
+shift $((OPTIND - 1))
+TARGET_CASE=$TEST_CASES
+[ $# -ne 0 ] && TARGET_CASE="$@"
+
+#
+# Loop in target browsers and run test
+#
+for ((i=0; i<${#DEVICE_OS[@]}; i++)) {
+  #
+  # Set target user agent
+  #
+  export OS=${DEVICE_OS[$i]}
+  export OS_VERSION=${DEVICE_OS_VERSION[$i]}
+  export DEVICE=${DEVICE_NAME[$i]}
+  #
+  # Generate user agent id using md5
+  #
+  DEVICE_ID=$(echo "${OS} ${OS_VERSION} ${DEVICE}" | openssl md5 -binary | xxd -p)
+  DEVICE_ID=$(echo -e "$DEVICE_ID" | tr -d '[:space:]')
+  if [ ! -z "$TARGET_DEVICE" ] && [ "$TARGET_DEVICE" != "$DEVICE_ID" ]; then
+    continue
+  fi
+  #
+  # Generate build name
+  # 
+  export BROWSER_STACK_BUILD_NAME="$(cat /dev/urandom | env LC_CTYPE=C tr -cd 'a-f0-9' | head -c 32)"
+  BUILD_RESULTS=$TEST_RESULTS/$BROWSER_STACK_BUILD_NAME
+  mkdir -p $BUILD_RESULTS
+  #
+  # Run test
+  #
+  echo "=============================================================================="
+  echo "Running automation test on..."
+  echo "  App URL:    ${APP_URL}"
+  echo "  OS:         ${OS} ${OS_VERSION}"
+  echo "  Device:     ${DEVICE}"
+  echo "  Device ID:  ${DEVICE_ID}"
+  echo "  Build Name: ${BROWSER_STACK_BUILD_NAME}"
+  robot --outputdir $BUILD_RESULTS $TARGET_CASE
+  #
+  # Get public url to BrowserStack result page and generate html to results dir
+  #
+  IFS_ORG="$IFS"
+  IFS=$'\n'
+  BS_SESSION_INFO=(`python $BIN_DIR/bs_app_public_url.py $BROWSER_STACK_BUILD_NAME`)
+  IFS="$IFS_ORG"
+  BS_SESSION_FILE=$BUILD_RESULTS/browserstack.html
+  echo "<html><body><ul>" > $BS_SESSION_FILE
+  for ((si=0; si<${#BS_SESSION_INFO[@]}; si+=2)) {
+    echo "<li><a href=\"${BS_SESSION_INFO[$si+1]}\" target=\"_blank\">${BS_SESSION_INFO[$si]}</a></li>" >> $BS_SESSION_FILE
+  }
+  echo "</ul></body></html>" >> $BS_SESSION_FILE
+}

@@ -9,10 +9,10 @@ bs_access_key = os.environ['BROWSER_STACK_ACCESS_KEY']
 
 argv_csv = csv.reader([sys.argv[1].upper()])
 argv = list(argv_csv)[0]
-arg_os = argv[0]
-arg_os_ver = argv[1]
-arg_browser = argv[2]
-arg_browser_ver = argv[3]
+arg_os = argv[0].strip()
+arg_os_ver = argv[1].strip()
+arg_browser = argv[2].strip()
+arg_browser_ver = argv[3].strip()
 
 req = urllib2.Request('https://api.browserstack.com/automate/browsers.json')
 encoded_con = base64.encodestring('%s:%s' % (bs_username, bs_access_key)).replace('\n', '')
@@ -51,7 +51,6 @@ for browser in browsers:
         ret_browser_ver = browser['browser_version']
 
 if not arg_is_valid:
-    print "Specified ua '%s %s %s %s' is not found on the BrowserStack. Look at https://www.browserstack.com/list-of-browsers-and-platforms/automate" % (arg_os, arg_os_ver, arg_browser, arg_browser_ver)
     exit (1)
 
 print ret_os
