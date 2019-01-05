@@ -1,0 +1,113 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css">
+    <link rel="stylesheet" href="/application.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+    <title>Welcome to Uetomae Automata Example</title>
+  </head>
+  <body>
+    <section class="hero is-success is-fullheight">
+      <div class="hero-head">
+        <nav class="navbar">
+          <div class="container">
+            <div class="navbar-brand is-black">
+              <span class="navbar-item site-title">
+                <img src="/img/logo.png" alt="Logo">
+                <span class="is-black">UETOMAE Automata Example</span>
+              </span>
+              <span class="navbar-burger burger" data-target="navbarMenu">
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
+            </div>
+            <div id="navbarMenu" class="navbar-menu">
+              <div class="navbar-end">
+                <span class="navbar-item">
+                  <a class="button is-black is-outlined" href="https://github.com/uetomae/automata">
+                    <span class="icon">
+                      <i class="fa fa-home"></i>
+                    </span>
+                    <span>Home</span>
+                  </a>
+                </span>
+                <span class="navbar-item">
+                  <a class="button is-black is-outlined" href="https://github.com/uetomae/automata/tree/master/examples/">
+                    <span class="icon">
+                      <i class="fa fa-code"></i>
+                    </span>
+                    <span>Examples</span>
+                  </a>
+                </span>
+                <span class="navbar-item">
+                  <a class="button is-black is-outlined" href="https://github.com/uetomae/automata/wiki">
+                    <span class="icon">
+                      <i class="fa fa-book"></i>
+                    </span>
+                    <span>Documentation</span>
+                  </a>
+                </span>
+                <span class="navbar-item">
+                  <a class="button is-black is-outlined" href="/">
+                    <span class="icon">
+                      <i class="fa fa-sign-out-alt"></i>
+                    </span>
+                    <span>Sign Out</span>
+                  </a>
+                </span>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          <div class="column is-6 is-offset-3">
+            <h1 class="title has-text-black">
+              Welcome!
+            </h1>
+            <h2 class="subtitle has-text-black">
+              Anyway do you know what does UETOMAE mean in Japanese?
+            </h2>
+            <form id="uetomae-quiz">
+              <div class="uetomae-quiz-1 control has-text-black">
+                <ul>
+                  <li>
+                    <label class="radio">
+                      <input type="radio" name="uetomae-quiz" value="a">
+                      Famous actress name.
+                    </label>
+                  </li>
+                  <li>
+                    <label class="radio">
+                      <input type="radio" name="uetomae-quiz" value="b">
+                      Go forward, rise above.
+                    </label>
+                  </li>
+                  <li>
+                    <label class="radio">
+                      <input type="radio" name="uetomae-quiz" value="c">
+                      Combined initials of founders.
+                    </label>
+                  </li>
+                </ul>
+              </div>
+              <div class="field answer-button">
+                <div class="control has-text-centered">
+                  <button id="answer-button" class="button is-link">Answer</button>
+                </div>
+              </div>
+            </form>
+            <div id="uetomae-quiz-answer" class="has-text-black"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script async type="text/javascript" src="/application.js"></script>
+  </body>
+</html>

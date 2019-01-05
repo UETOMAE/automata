@@ -31,10 +31,11 @@ TARGET_CASE=$TEST_CASES
 export RUN_ON_DOCKER=false
 [ -f /.dockerenv ] && RUN_ON_DOCKER=true
 
-
 #
 # Run test
 #
-Xvfb :99 -ac -screen 0 ${SCREEN_WIDTH}x${SCREEN_HEIGHT}x${SCREEN_COLOR_DEPTH} &
-export DISPLAY=:99
+if [ $RUN_ON_DOCKER == "true" ]; then
+  Xvfb :99 -ac -screen 0 ${SCREEN_WIDTH}x${SCREEN_HEIGHT}x${SCREEN_COLOR_DEPTH} &
+  export DISPLAY=:99
+fi
 robot --outputdir $TEST_RESULTS $TARGET_CASE

@@ -18,6 +18,19 @@ TARGET_CASE=$TEST_CASES
 [ $# -ne 0 ] && TARGET_CASE="$@"
 
 #
+# Wake up BrowserStackLocal
+#
+[ -z "$BROWSER_STACK_LOCAL" ] && export BROWSER_STACK_LOCAL=false
+if [ "$BROWSER_STACK_LOCAL" == "true" ]; then
+  BROWSER_STACK_LOCAL_LOG=/tmp/browser_stack_local.log
+  BrowserStackLocal --key ${BROWSER_STACK_ACCESS_KEY} > $BROWSER_STACK_LOCAL_LOG &
+  until grep "You can now access your local server(s) in our remote browser." $BROWSER_STACK_LOCAL_LOG > /dev/null
+  do
+    sleep 1
+  done
+fi
+
+#
 # Loop in target browsers and run test
 #
 for ((i=0; i<${#UA_OS[@]}; i++)) {

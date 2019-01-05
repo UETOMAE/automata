@@ -3,7 +3,7 @@
 #
 # Set environment variables for test implementation
 #
-BIN_DIR=$(dirname $0)
+BIN_DIR=$(cd $(dirname $0); pwd)
 export TEST_ROOT=$(pwd)
 export RESOURCES=$(dirname $BIN_DIR)/robotframework/resources
 [ -z "$LOCAL_MODE" ] && LOCAL_MODE=false
