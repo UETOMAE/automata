@@ -24,9 +24,15 @@ TARGET_CASE=$TEST_CASES
 if [ "$BROWSER_STACK_LOCAL" == "true" ]; then
   BROWSER_STACK_LOCAL_LOG=/tmp/browser_stack_local.log
   BrowserStackLocal --key ${BROWSER_STACK_ACCESS_KEY} > $BROWSER_STACK_LOCAL_LOG &
+  WAITING_TIME=0
   until grep "You can now access your local server(s) in our remote browser." $BROWSER_STACK_LOCAL_LOG > /dev/null
   do
     sleep 1
+    WAITING_TIME=$((++WAITING_TIME))
+    if [[ $WAITING_TIME -gt 30 ]]; then
+      echo "BrowserStackLocal cannot be started. Please check it out."
+      exit
+    fi
   done
 fi
 
