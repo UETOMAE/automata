@@ -10,6 +10,14 @@ if [ $LOCAL_MODE == false ]; then
     exit 1
   fi
   #
+  # Validate the number of Devices
+  #
+  DEVICE_COUNT=$((`cat $UA_FILE | wc -l`))
+  if [ $DEVICE_COUNT -gt 10 ]; then
+    echo "The number of Devices ($DEVICE_COUNT) are too much. You should specify it less than 10 on device.csv."
+    exit 1
+  fi
+  #
   # Verify all data
   #
   DEVICE_OS=()

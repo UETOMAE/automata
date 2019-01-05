@@ -10,6 +10,14 @@ if [ $LOCAL_MODE == false ]; then
     exit 1
   fi
   #
+  # Validate the number of UserAgents
+  #
+  UA_COUNT=$((`cat $UA_FILE | wc -l`))
+  if [ $UA_COUNT -gt 20 ]; then
+    echo "The number of UserAgents ($UA_COUNT) are too much. You should specify it less than 20 on ua.csv."
+    exit 1
+  fi
+  #
   # Verify all data
   #
   UA_OS=()
