@@ -13,7 +13,6 @@ teardown() {
 
 @test "test runs right" {
   run run_test
-  echo "$output"
   [ "$status" -eq 0 ]
   [[ "$output" =~ "OS X Mojave" ]]
   [[ "$output" =~ "Windows 10" ]]
@@ -59,7 +58,6 @@ teardown() {
 @test "missing config file" {
   rm -f config
   run run_test
-  echo "$output"
   [ "$status" -eq 1 ]
   [ "$output" = "You need to create config file." ]
 }
