@@ -4,7 +4,7 @@ jobs:
   test:
     docker:
       - image: uetomae/automata-stage:latest
-    working_directory: /var/automata
+    working_directory: /var/autotest/automata
     parallelism: 1
     steps:
       - checkout
