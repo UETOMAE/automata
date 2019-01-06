@@ -6,7 +6,7 @@
 [ -z "$UA_FILE" ] && UA_FILE=$TEST_ROOT/ua.csv
 if [ $LOCAL_MODE == false ]; then
   if [ ! -f $UA_FILE ]; then
-    echo "You have to define the testing user agents on $UA_FILE"
+    echo "You have to define the testing user agents on 'ua.csv'."
     exit 1
   fi
   #
@@ -24,10 +24,11 @@ if [ $LOCAL_MODE == false ]; then
   UA_OS_VERSION=()
   UA_BROWSER=()
   UA_BROWSER_VERSION=()
+  [ -z "$AUTOMATA_PY_BS_VALIDATE_UA" ] && AUTOMATA_PY_BS_VALIDATE_UA=$BIN_DIR/bs_validate_ua.py
   while read LINE; do
     IFS_ORG="$IFS"
     IFS=$'\n'
-    BROWSER_DATA=(`python $BIN_DIR/bs_validate_ua.py "$LINE"`)
+    BROWSER_DATA=(`python $AUTOMATA_PY_BS_VALIDATE_UA "$LINE"`)
     if [ $? -ne 0 ]; then
       echo 'Defined user agent below is not supported by browserstack. See the full list on "https://www.browserstack.com/list-of-browsers-and-platforms/automate"'
       echo $LINE

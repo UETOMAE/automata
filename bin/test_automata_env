@@ -13,7 +13,7 @@ export RESOURCES=$(dirname $BIN_DIR)/robotframework/resources
 #
 CONFIG_FILE=$TEST_ROOT/config
 if [ ! -f $CONFIG_FILE ]; then
-  echo "You need to create config file '${CONFIG_FILE}'"
+  echo "You need to create config file."
   exit 1
 fi
 . $CONFIG_FILE
@@ -21,9 +21,19 @@ if [ -z "$PROJECT_NAME" ]; then
   echo "Missing mandatory environment variable PROJECT_NAME."
   exit 1
 fi
+if [ -z "$TARGET_TYPE" ]; then
+  echo "Missing mandatory environment variable TARGET_TYPE."
+  exit 1
+fi
 if [ "$TARGET_TYPE" != "web" ] && [ "$TARGET_TYPE" != "app" ]; then
   echo "TARGET_TYPE should be 'web' or 'app'."
   exit 1
+fi
+if [ ! -z "$BROWSER_STACK_LOCAL" ]; then
+  if [ "$BROWSER_STACK_LOCAL" != "true" ] && [ "$BROWSER_STACK_LOCAL" != "false" ]; then
+    echo "BROWSER_STACK_LOCAL should be 'true' or 'false'."
+    exit 1
+  fi
 fi
 if [ "$TARGET_TYPE" = "app" ]; then
   if [ -z "$APP_NAME" ]; then
@@ -58,10 +68,10 @@ if [ -z "$TEST_CASES" ]; then
 fi
 
 #
-# Check diretories
+# Check directories
 #
 if [ ! -d "$TEST_CASES" ]; then
-  echo "No test cases exist on '$TEST_CASES'"
+  echo "No directory 'cases' for test cases."
   exit 1
 fi
 
