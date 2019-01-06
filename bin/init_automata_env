@@ -26,6 +26,11 @@ if [ ! -f $CONFIG_FILE ]; then
   while [[ -z "$TARGET_TYPE" ]] || ([[ "$TARGET_TYPE" != "web" ]] && [[ "$TARGET_TYPE" != "app" ]]); do
     read -p "Target application type (web|app): " TARGET_TYPE
   done
+  if [[ "$TARGET_TYPE" == "web" ]]; then
+    while [[ -z "$BROWSER_STACK_LOCAL" ]] || ([[ "$BROWSER_STACK_LOCAL" != "true" ]] && [[ "$BROWSER_STACK_LOCAL" != "false" ]]); do
+      read -p "Do you want to use BrowserStackLocal? (true|false): " BROWSER_STACK_LOCAL
+    done
+  fi
   if [[ "$TARGET_TYPE" == "app" ]]; then
     while [[ -z "$APP_NAME" ]]; do
       read -p "Uploading ipa/apk file name: " APP_NAME
@@ -37,6 +42,9 @@ if [ ! -f $CONFIG_FILE ]; then
   fi
   echo "export PROJECT_NAME=\"${PROJECT_NAME}\"" > $CONFIG_FILE
   echo "export TARGET_TYPE=\"${TARGET_TYPE}\"" >> $CONFIG_FILE
+  if [[ "$TARGET_TYPE" == "web" ]]; then
+    echo "export BROWSER_STACK_LOCAL=\"${BROWSER_STACK_LOCAL}\"" >> $CONFIG_FILE
+  fi
   if [[ "$TARGET_TYPE" == "app" ]]; then
     echo "export APP_NAME=\"${APP_NAME}\"" >> $CONFIG_FILE
     echo "export APP_VERSION=\"${APP_VERSION}\"" >> $CONFIG_FILE

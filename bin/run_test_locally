@@ -1,6 +1,16 @@
 #!/bin/bash
 
 #
+# Usage
+#
+exit_with_usage() {
+  echo "basename $0"
+  echo "    -u  Specify target UserAgent ID"
+  exit
+}
+
+#
+#
 # Prepare and validate test environment
 #
 export LOCAL_MODE=true
@@ -11,7 +21,7 @@ BIN_DIR=$(cd $(dirname $0); pwd)
 # Parse options
 #
 export BROWSER=chrome
-while getopts "b:" OPT; do
+while getopts "b:h" OPT; do
   case $OPT in
     b)  export BROWSER=$OPTARG
         ;;
@@ -31,10 +41,12 @@ TARGET_CASE=$TEST_CASES
 export RUN_ON_DOCKER=false
 [ -f /.dockerenv ] && RUN_ON_DOCKER=true
 
-
 #
 # Run test
 #
-Xvfb :99 -ac -screen 0 ${SCREEN_WIDTH}x${SCREEN_HEIGHT}x${SCREEN_COLOR_DEPTH} &
-export DISPLAY=:99
-robot --outputdir $TEST_RESULTS $TARGET_CASE
+if [ $RUN_ON_DOCKER == "true" ]; then
+  Xvfb :99 -ac -screen 0 ${SCREEN_WIDTH}x${SCREEN_HEIGHT}x${SCREEN_COLOR_DEPTH} &
+  export DISPLAY=:99
+fi
+[ -z "$AUTOMATA_BIN_ROBOT" ] && AUTOMATA_BIN_ROBOT=robot
+$AUTOMATA_BIN_ROBOT --outputdir $TEST_RESULTS $TARGET_CASE

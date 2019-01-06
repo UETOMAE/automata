@@ -3,9 +3,10 @@
 #
 # Check if target application has been uploaded
 #
+[ -z "$AUTOMATA_PY_BS_APP_INFO" ] && AUTOMATA_PY_BS_APP_INFO=$BIN_DIR/bs_app_info.py
 IFS_ORG="$IFS"
 IFS=$'\n'
-APP_INFO=(`python $BIN_DIR/bs_app_info.py "$APP_NAME" "$APP_VERSION"`)
+APP_INFO=(`python $AUTOMATA_PY_BS_APP_INFO "$APP_NAME" "$APP_VERSION"`)
 if [ $? -ne 0 ]; then
   echo "Application '$APP_NAME $APP_VERSION' has not been uploaded to browserstack yet."
   exit 1

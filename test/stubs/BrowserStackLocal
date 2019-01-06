@@ -1,0 +1,4 @@
+#!/bin/bash
+
+echo "You can now access your local server(s) in our remote browser."
+exit 0

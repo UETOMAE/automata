@@ -9,7 +9,7 @@ Open UserAgent on Local
 Open UserAgent on BrowserStack
   [Arguments]  ${url}  ${case_name}
   Open Browser  url=${url}  browser=%{BROWSER}  remote_url=${BROWSER_STACK_URL}
-  ...           desired_capabilities=browser:%{BROWSER},browser_version:%{BROWSER_VERSION},os:%{OS},os_version:%{OS_VERSION},build:%{BROWSER_STACK_BUILD_NAME},name:${case_name}
+  ...           desired_capabilities=browser:%{BROWSER},browser_version:%{BROWSER_VERSION},os:%{OS},os_version:%{OS_VERSION},build:%{BROWSER_STACK_BUILD_NAME},name:${case_name},browserstack.local:%{BROWSER_STACK_LOCAL}
 
 Open Automata Browser
   [Arguments]  ${url}  ${case_name}=${SUITE NAME}

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+if [ "$OS" = "Failing OS" ]; then
+  echo "failed"
+  exit 1
+fi
+
+echo "success"
+exit 0
