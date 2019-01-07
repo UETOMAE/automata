@@ -9,7 +9,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Run test
+          name: Run test automata itself
           command: bats ./test
 workflows:
   version: 2

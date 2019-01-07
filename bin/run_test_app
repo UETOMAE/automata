@@ -67,6 +67,7 @@ for ((i=0; i<${#DEVICE_OS[@]}; i++)) {
   #
   # Get public url to BrowserStack result page and generate html to results dir
   #
+  echo "Execution logs on BrowserStack:"
   IFS_ORG="$IFS"
   IFS=$'\n'
   [ -z "$AUTOMATA_PY_BS_APP_PUBLIC_URL" ] && AUTOMATA_PY_BS_APP_PUBLIC_URL=$BIN_DIR/bs_app_public_url.py
@@ -76,6 +77,8 @@ for ((i=0; i<${#DEVICE_OS[@]}; i++)) {
   echo "<html><body><ul>" > "$BS_SESSION_FILE"
   for ((si=0; si<${#BS_SESSION_INFO[@]}; si+=2)) {
     echo "<li><a href=\"${BS_SESSION_INFO[$si+1]}\" target=\"_blank\">${BS_SESSION_INFO[$si]}</a></li>" >> "$BS_SESSION_FILE"
+    echo "  ${BS_SESSION_INFO[$si]}"
+    echo "  ${BS_SESSION_INFO[$si+1]}"
   }
   echo "</ul></body></html>" >> "$BS_SESSION_FILE"
 }
