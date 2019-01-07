@@ -16,6 +16,3 @@ services:
       - "20924:80"
     volumes:
       - ./data/www:/usr/share/nginx/html
-
-volumes:
-  automata_data:

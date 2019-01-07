@@ -9,8 +9,11 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Run test
+          name: Run test automata itself
           command: bats ./test
+      - run:
+          name: Run test web example
+          command: cd examples/web; run_test
 workflows:
   version: 2
   test:
