@@ -5,8 +5,12 @@
 #
 export LOCAL_MODE=false
 export RUN_ON_DOCKER=false
-BIN_DIR=$(cd $(dirname $0); pwd)
-. $BIN_DIR/test_automata_env
+BIN_DIR=$(cd "$(dirname "$0")" && pwd)
 
-[ "$TARGET_TYPE" = "web" ] && . $BIN_DIR/run_test_web
-[ "$TARGET_TYPE" = "app" ] && . $BIN_DIR/run_test_app
+# shellcheck source=/dev/null
+. "$BIN_DIR/test_automata_env"
+
+# shellcheck source=/dev/null
+[ "$TARGET_TYPE" = "web" ] && . "$BIN_DIR/run_test_web"
+# shellcheck source=/dev/null
+[ "$TARGET_TYPE" = "app" ] && . "$BIN_DIR/run_test_app"

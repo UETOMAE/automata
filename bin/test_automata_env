@@ -3,20 +3,24 @@
 #
 # Set environment variables for test implementation
 #
-BIN_DIR=$(cd $(dirname $0); pwd)
-export TEST_ROOT=$(pwd)
-export RESOURCES=$(dirname $BIN_DIR)/robotframework/resources
+BIN_DIR=$(cd "$(dirname "$0")" && pwd)
+LIB_DIR=$(dirname "$BIN_DIR")/lib
+TEST_ROOT=$(pwd)
+export TEST_ROOT
+RESOURCES=$(dirname "$BIN_DIR")/robotframework/resources
+export RESOURCES
 [ -z "$LOCAL_MODE" ] && LOCAL_MODE=false
 
 #
 # Read config file
 #
 CONFIG_FILE=$TEST_ROOT/config
-if [ ! -f $CONFIG_FILE ]; then
+if [ ! -f "$CONFIG_FILE" ]; then
   echo "You need to create config file."
   exit 1
 fi
-. $CONFIG_FILE
+# shellcheck source=/dev/null
+. "$CONFIG_FILE"
 if [ -z "$PROJECT_NAME" ]; then
   echo "Missing mandatory environment variable PROJECT_NAME."
   exit 1
@@ -29,7 +33,7 @@ if [ "$TARGET_TYPE" != "web" ] && [ "$TARGET_TYPE" != "app" ]; then
   echo "TARGET_TYPE should be 'web' or 'app'."
   exit 1
 fi
-if [ ! -z "$BROWSER_STACK_LOCAL" ]; then
+if [ -n "$BROWSER_STACK_LOCAL" ]; then
   if [ "$BROWSER_STACK_LOCAL" != "true" ] && [ "$BROWSER_STACK_LOCAL" != "false" ]; then
     echo "BROWSER_STACK_LOCAL should be 'true' or 'false'."
     exit 1
@@ -50,8 +54,9 @@ fi
 # Source .env file if it exists
 #
 DOT_ENV_FILE=$TEST_ROOT/.env
-if [ -f $DOT_ENV_FILE ]; then
-  . $DOT_ENV_FILE
+if [ -f "$DOT_ENV_FILE" ]; then
+  # shellcheck source=/dev/null
+  . "$DOT_ENV_FILE"
 fi
 
 #
@@ -94,9 +99,12 @@ fi
 # Check target environment list on browserstack
 #
 if [ "$TARGET_TYPE" = "web" ]; then
-  . $BIN_DIR/test_automata_env_ua
+  # shellcheck source=/dev/null
+  . "$BIN_DIR/test_automata_env_ua"
 fi
 if [ "$TARGET_TYPE" = "app" ]; then
-  . $BIN_DIR/test_automata_env_device
-  . $BIN_DIR/test_automata_env_apps
+  # shellcheck source=/dev/null
+  . "$BIN_DIR/test_automata_env_device"
+  # shellcheck source=/dev/null
+  . "$BIN_DIR/test_automata_env_apps"
 fi

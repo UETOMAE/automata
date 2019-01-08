@@ -1,5 +1,13 @@
 #!/bin/bash
 
-BIN_DIR=$(cd $(dirname $0); pwd)
-. $BIN_DIR/test_automata_env
-python $BIN_DIR/bs_list_ua.py
+BIN_DIR=$(cd "$(dirname "$0")" && pwd)
+LIB_DIR=$(dirname "$BIN_DIR")/lib
+TEST_ROOT=$(pwd)
+export TEST_ROOT
+
+DOT_ENV_FILE=$TEST_ROOT/.env
+if [ -f "$DOT_ENV_FILE" ]; then
+  # shellcheck source=/dev/null
+  . "$DOT_ENV_FILE"
+fi
+python "$LIB_DIR/bs_list_ua.py"

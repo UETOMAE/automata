@@ -1,19 +1,19 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # Check if ua.csv to define testing user agents
 #
 [ -z "$DEVICE_FILE" ] && DEVICE_FILE=$TEST_ROOT/device.csv
-if [ $LOCAL_MODE == false ]; then
-  if [ ! -f $DEVICE_FILE ]; then
+if [ "$LOCAL_MODE" == false ]; then
+  if [ ! -f "$DEVICE_FILE" ]; then
     echo "You have to define the testing devices on 'device.csv'."
     exit 1
   fi
   #
   # Validate the number of Devices
   #
-  DEVICE_COUNT=$((`cat $DEVICE_FILE | wc -l`))
-  if [ $DEVICE_COUNT -gt 10 ]; then
+  DEVICE_COUNT=$(< "$DEVICE_FILE" wc -l)
+  if [ "$DEVICE_COUNT" -gt 10 ]; then
     echo "The number of Devices ($DEVICE_COUNT) are too much. You should specify it less than 10 on device.csv."
     exit 1
   fi
@@ -23,19 +23,17 @@ if [ $LOCAL_MODE == false ]; then
   DEVICE_OS=()
   DEVICE_OS_VERSION=()
   DEVICE_NAME=()
-  [ -z "$AUTOMATA_PY_BS_VALIDATE_DEVICE" ] && AUTOMATA_PY_BS_VALIDATE_DEVICE=$BIN_DIR/bs_validate_device.py
-  while read LINE; do
-    IFS_ORG="$IFS"
-    IFS=$'\n'
-    DEVICE_DATA=(`python $AUTOMATA_PY_BS_VALIDATE_DEVICE "$LINE"`)
-    if [ $? -ne 0 ]; then
+  [ -z "$AUTOMATA_PY_BS_VALIDATE_DEVICE" ] && AUTOMATA_PY_BS_VALIDATE_DEVICE=$LIB_DIR/bs_validate_device.py
+  while read -r LINE; do
+    if ! VALIDATE_RESULT=$(python "$AUTOMATA_PY_BS_VALIDATE_DEVICE" "$LINE")
+    then
       echo 'Defined device below is not supported by browserstack. See the full list on "https://www.browserstack.com/list-of-browsers-and-platforms/app_automate"'
-      echo $LINE
+      echo "$LINE"
       exit 1
     fi
-    IFS="$IFS_ORG"
+    mapfile -t DEVICE_DATA < <(echo -e "$VALIDATE_RESULT")
     export DEVICE_OS=("${DEVICE_OS[@]}" "${DEVICE_DATA[0]}")
     export DEVICE_OS_VERSION=("${DEVICE_OS_VERSION[@]}" "${DEVICE_DATA[1]}")
     export DEVICE_NAME=("${DEVICE_NAME[@]}" "${DEVICE_DATA[2]}")
-  done < $DEVICE_FILE
+  done < "$DEVICE_FILE"
 fi
