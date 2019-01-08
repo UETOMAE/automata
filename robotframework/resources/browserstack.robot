@@ -17,4 +17,5 @@ Open Automata Browser
   Run Keyword If  "%{LOCAL_MODE}" == "false"  Open UserAgent on BrowserStack  ${url}  ${case_name}
 
 Maximize Automata Browser
+  Run Keyword If  "%{RUN_ON_DOCKER}" == "true"   Set Window Size  %{SCREEN_WIDTH}  %{SCREEN_HEIGHT}
   Run Keyword If  "%{RUN_ON_DOCKER}" == "false"  Maximize Browser Window

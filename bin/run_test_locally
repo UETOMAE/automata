@@ -41,6 +41,8 @@ TARGET_CASE=( "$TEST_CASES" )
 #
 export RUN_ON_DOCKER=false
 [ -f /.dockerenv ] && RUN_ON_DOCKER=true
+[ -z "$BROWSER_STACK_USERNAME" ] && export BROWSER_STACK_USERNAME=dummy
+[ -z "$BROWSER_STACK_ACCESS_KEY" ] && export BROWSER_STACK_ACCESS_KEY=dummy
 
 #
 # Run test
