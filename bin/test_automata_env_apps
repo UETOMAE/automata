@@ -1,17 +1,15 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # Check if target application has been uploaded
 #
-[ -z "$AUTOMATA_PY_BS_APP_INFO" ] && AUTOMATA_PY_BS_APP_INFO=$BIN_DIR/bs_app_info.py
-IFS_ORG="$IFS"
-IFS=$'\n'
-APP_INFO=(`python $AUTOMATA_PY_BS_APP_INFO "$APP_NAME" "$APP_VERSION"`)
-if [ $? -ne 0 ]; then
+[ -z "$AUTOMATA_PY_BS_APP_INFO" ] && AUTOMATA_PY_BS_APP_INFO=$LIB_DIR/bs_app_info.py
+if ! APP_RESULT=$(python "$AUTOMATA_PY_BS_APP_INFO" "$APP_NAME" "$APP_VERSION")
+then
   echo "Application '$APP_NAME $APP_VERSION' has not been uploaded to browserstack yet."
   exit 1
 fi
-IFS="$IFS_ORG"
+mapfile -t APP_INFO < <(echo -e "$APP_RESULT")
 export APP_NAME=${APP_INFO[0]}
 export APP_VERSION=${APP_INFO[1]}
 export APP_URL=${APP_INFO[2]}

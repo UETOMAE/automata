@@ -5,5 +5,9 @@ if [ "$OS" = "Failing OS" ]; then
   exit 1
 fi
 
+for arg in "$@"
+do
+  echo "**$arg**"
+done
 echo "success"
 exit 0

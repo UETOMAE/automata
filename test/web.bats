@@ -14,9 +14,22 @@ teardown() {
 @test "test runs right" {
   run run_test
   [ "$status" -eq 0 ]
+  echo "$output"
   [[ "$output" =~ "OS X Mojave" ]]
   [[ "$output" =~ "Windows 10" ]]
   [[ "$output" =~ "Windows 8.1" ]]
+  [[ "$output" =~ "cases**" ]]
+}
+
+@test "run with specified test cases" {
+  run run_test test1 test2
+  [ "$status" -eq 0 ]
+  echo "$output"
+  [[ "$output" =~ "OS X Mojave" ]]
+  [[ "$output" =~ "Windows 10" ]]
+  [[ "$output" =~ "Windows 8.1" ]]
+  [[ "$output" =~ "**test1**" ]]
+  [[ "$output" =~ "**test2**" ]]
 }
 
 @test "run only second user agent" {

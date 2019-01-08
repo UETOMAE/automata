@@ -1,9 +1,12 @@
 #!/bin/bash
 
-BIN_DIR=$(cd $(dirname $0); pwd)
-export TEST_ROOT=$(pwd)
+BIN_DIR=$(cd "$(dirname "$0")" && pwd)
+LIB_DIR=$(dirname "$BIN_DIR")/lib
+TEST_ROOT=$(pwd)
+export TEST_ROOT
 DOT_ENV_FILE=$TEST_ROOT/.env
-if [ -f $DOT_ENV_FILE ]; then
-  . $DOT_ENV_FILE
+if [ -f "$DOT_ENV_FILE" ]; then
+  # shellcheck source=/dev/null
+  . "$DOT_ENV_FILE"
 fi
-python $BIN_DIR/bs_list_devices.py
+python "$LIB_DIR//bs_list_devices.py"

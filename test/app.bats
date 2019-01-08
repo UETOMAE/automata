@@ -17,6 +17,18 @@ teardown() {
   [[ "$output" =~ "ios 10.3" ]]
   [[ "$output" =~ "ios 12.1" ]]
   [[ "$output" =~ "android 6.0" ]]
+  [[ "$output" =~ "cases**" ]]
+}
+
+@test "run with specified test cases" {
+  run run_test test1 test2
+  [ "$status" -eq 0 ]
+  echo "$output"
+  [[ "$output" =~ "ios 10.3" ]]
+  [[ "$output" =~ "ios 12.1" ]]
+  [[ "$output" =~ "android 6.0" ]]
+  [[ "$output" =~ "**test1**" ]]
+  [[ "$output" =~ "**test2**" ]]
 }
 
 @test "run only second device" {

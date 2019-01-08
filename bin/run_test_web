@@ -23,8 +23,8 @@ while getopts "u:h" OPT; do
   esac
 done
 shift $((OPTIND - 1))
-TARGET_CASE=$TEST_CASES
-[ $# -ne 0 ] && TARGET_CASE="$@"
+TARGET_CASE=( "$TEST_CASES" )
+[ $# -ne 0 ] && TARGET_CASE=( "$@" )
 
 #
 # Wake up BrowserStackLocal
@@ -34,7 +34,7 @@ if [ "$BROWSER_STACK_LOCAL" == "true" ]; then
   BROWSER_STACK_LOCAL_LOG=/tmp/browser_stack_local.log
   [ -z "$AUTOMATA_BIN_BROWSERSTACKLOCAL" ] && AUTOMATA_BIN_BROWSERSTACKLOCAL=BrowserStackLocal
   [ -z "$AUTOMATA_BROWSERSTACKLOCAL_TIMEOUT" ] && AUTOMATA_BROWSERSTACKLOCAL_TIMEOUT=30
-  $AUTOMATA_BIN_BROWSERSTACKLOCAL --key ${BROWSER_STACK_ACCESS_KEY} > $BROWSER_STACK_LOCAL_LOG &
+  $AUTOMATA_BIN_BROWSERSTACKLOCAL --key "${BROWSER_STACK_ACCESS_KEY}" > "$BROWSER_STACK_LOCAL_LOG" &
   WAITING_TIME=0
   until grep "You can now access your local server(s) in our remote browser." $BROWSER_STACK_LOCAL_LOG > /dev/null
   do
@@ -64,13 +64,14 @@ for ((i=0; i<${#UA_OS[@]}; i++)) {
   #
   UA_ID=$(echo "${OS} ${OS_VERSION} ${BROWSER} ${BROWSER_VERSION}" | openssl md5 -binary | xxd -p)
   UA_ID=$(echo -e "$UA_ID" | tr -d '[:space:]')
-  if [ ! -z "$TARGET_UA" ] && [ "$TARGET_UA" != "$UA_ID" ]; then
+  if [ -n "$TARGET_UA" ] && [ "$TARGET_UA" != "$UA_ID" ]; then
     continue
   fi
   #
   # Generate build name
   # 
-  export BROWSER_STACK_BUILD_NAME="${PROJECT_NAME}__${OS} ${OS_VERSION}_${BROWSER} ${BROWSER_VERSION}__$(cat /dev/urandom | env LC_CTYPE=C tr -cd 'a-f0-9' | head -c 8)"
+  BROWSER_STACK_BUILD_NAME="${PROJECT_NAME}__${OS} ${OS_VERSION}_${BROWSER} ${BROWSER_VERSION}__$(env LC_CTYPE=C < /dev/urandom tr -cd 'a-f0-9' | head -c 8)"
+  export BROWSER_STACK_BUILD_NAME
   BUILD_RESULTS="$TEST_RESULTS/$BROWSER_STACK_BUILD_NAME"
   mkdir -p "$BUILD_RESULTS"
   #
@@ -83,17 +84,16 @@ for ((i=0; i<${#UA_OS[@]}; i++)) {
   echo "  UAID:       ${UA_ID}"
   echo "  Build Name: ${BROWSER_STACK_BUILD_NAME}"
   [ -z "$AUTOMATA_BIN_ROBOT" ] && AUTOMATA_BIN_ROBOT=robot
-  $AUTOMATA_BIN_ROBOT --outputdir "$BUILD_RESULTS" $TARGET_CASE
-  [ $? -ne 0 ] && RET_CODE=1
+  if ! $AUTOMATA_BIN_ROBOT --outputdir "$BUILD_RESULTS" "${TARGET_CASE[@]}"
+  then
+    RET_CODE=1
+  fi
   #
   # Get public url to BrowserStack result page and generate html to results dir
   #
   echo "Execution logs on BrowserStack:"
-  IFS_ORG="$IFS"
-  IFS=$'\n'
-  [ -z "$AUTOMATA_PY_BS_PUBLIC_URL" ] && AUTOMATA_PY_BS_PUBLIC_URL=$BIN_DIR/bs_public_url.py
-  BS_SESSION_INFO=(`python $AUTOMATA_PY_BS_PUBLIC_URL "$BROWSER_STACK_BUILD_NAME"`)
-  IFS="$IFS_ORG"
+  [ -z "$AUTOMATA_PY_BS_PUBLIC_URL" ] && AUTOMATA_PY_BS_PUBLIC_URL=$LIB_DIR/bs_public_url.py
+  mapfile -t BS_SESSION_INFO < <(python "$AUTOMATA_PY_BS_PUBLIC_URL" "$BROWSER_STACK_BUILD_NAME")
   BS_SESSION_FILE="$BUILD_RESULTS/browserstack.html"
   echo "<html><body><ul>" > "$BS_SESSION_FILE"
   for ((si=0; si<${#BS_SESSION_INFO[@]}; si+=2)) {
