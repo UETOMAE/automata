@@ -3,13 +3,12 @@ version: 2
 jobs:
   shellcheck:
     docker:
-      - image: koalaman/shellcheck:stable
-    working_directory: /mnt
+      - image: nlknguyen/alpine-shellcheck:latest
     steps:
       - checkout
       - run:
           name: Shellcheck
-          command: shellcheck /mnt/bin/*
+          command: find bin -type f | xargs shellcheck
   test:
     docker:
       - image: uetomae/automata-stage:latest
