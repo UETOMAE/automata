@@ -1,6 +1,16 @@
 ---
 version: 2
 jobs:
+  shellcheck:
+    docker:
+      - image: nlknguyen/alpine-shellcheck:latest
+    steps:
+      - checkout
+      - run:
+          name: Shellcheck
+          command: |
+            find ./bin -type f | wc -l
+            find ./bin -type f | xargs shellcheck
   test:
     docker:
       - image: uetomae/automata-stage:latest
@@ -15,4 +25,5 @@ workflows:
   version: 2
   test:
     jobs:
+      - shellcheck
       - test

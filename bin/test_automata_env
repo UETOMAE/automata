@@ -5,6 +5,7 @@
 #
 BIN_DIR=$(cd "$(dirname "$0")" && pwd)
 LIB_DIR=$(dirname "$BIN_DIR")/lib
+export LIB_DIR
 TEST_ROOT=$(pwd)
 export TEST_ROOT
 RESOURCES=$(dirname "$BIN_DIR")/robotframework/resources

@@ -3,55 +3,56 @@
 #
 # prepare
 #
-BIN_DIR=`dirname $0`
-TEST_HOME=`pwd`
+BIN_DIR=$(cd "$(dirname "$0")" && pwd)
+TEST_HOME=$(pwd)
 echo "Initializing uetomae automata environment..."
 
 #
 # directories
 #
-mkdir -p $TEST_HOME/cases
-mkdir -p $TEST_HOME/results
-mkdir -p $TEST_HOME/resources
+mkdir -p "$TEST_HOME/cases"
+mkdir -p "$TEST_HOME/results"
+mkdir -p "$TEST_HOME/resources"
 
 #
 # config file
 #
 CONFIG_FILE=$TEST_HOME/config
-if [ ! -f $CONFIG_FILE ]; then
+if [ ! -f "$CONFIG_FILE" ]; then
   echo "Generating config file..."
   while [[ -z "$PROJECT_NAME" ]]; do
-    read -p "Your project name: " PROJECT_NAME
+    read -rp "Your project name: " PROJECT_NAME
   done
-  while [[ -z "$TARGET_TYPE" ]] || ([[ "$TARGET_TYPE" != "web" ]] && [[ "$TARGET_TYPE" != "app" ]]); do
-    read -p "Target application type (web|app): " TARGET_TYPE
+  while [[ -z "$TARGET_TYPE" ]] || { [[ "$TARGET_TYPE" != "web" ]] && [[ "$TARGET_TYPE" != "app" ]]; }; do
+    read -rp "Target application type (web|app): " TARGET_TYPE
   done
   if [[ "$TARGET_TYPE" == "web" ]]; then
-    while [[ -z "$BROWSER_STACK_LOCAL" ]] || ([[ "$BROWSER_STACK_LOCAL" != "true" ]] && [[ "$BROWSER_STACK_LOCAL" != "false" ]]); do
-      read -p "Do you want to use BrowserStackLocal? (true|false): " BROWSER_STACK_LOCAL
+    while [[ -z "$BROWSER_STACK_LOCAL" ]] || { [[ "$BROWSER_STACK_LOCAL" != "true" ]] && [[ "$BROWSER_STACK_LOCAL" != "false" ]]; }; do
+      read -rp "Do you want to use BrowserStackLocal? (true|false): " BROWSER_STACK_LOCAL
     done
   fi
   if [[ "$TARGET_TYPE" == "app" ]]; then
     while [[ -z "$APP_NAME" ]]; do
-      read -p "Uploading ipa/apk file name: " APP_NAME
+      read -rp "Uploading ipa/apk file name: " APP_NAME
     done
     while [[ -z "$APP_VERSION" ]]; do
-      read -p "Target application version [latest]: " APP_VERSION
+      read -rp "Target application version [latest]: " APP_VERSION
       [[ -z "$APP_VERSION" ]] && APP_VERSION="latest"
     done
   fi
-  echo "export PROJECT_NAME=\"${PROJECT_NAME}\"" > $CONFIG_FILE
-  echo "export TARGET_TYPE=\"${TARGET_TYPE}\"" >> $CONFIG_FILE
+  echo "export PROJECT_NAME=\"${PROJECT_NAME}\"" > "$CONFIG_FILE"
+  echo "export TARGET_TYPE=\"${TARGET_TYPE}\"" >> "$CONFIG_FILE"
   if [[ "$TARGET_TYPE" == "web" ]]; then
-    echo "export BROWSER_STACK_LOCAL=\"${BROWSER_STACK_LOCAL}\"" >> $CONFIG_FILE
+    echo "export BROWSER_STACK_LOCAL=\"${BROWSER_STACK_LOCAL}\"" >> "$CONFIG_FILE"
   fi
   if [[ "$TARGET_TYPE" == "app" ]]; then
-    echo "export APP_NAME=\"${APP_NAME}\"" >> $CONFIG_FILE
-    echo "export APP_VERSION=\"${APP_VERSION}\"" >> $CONFIG_FILE
+    echo "export APP_NAME=\"${APP_NAME}\"" >> "$CONFIG_FILE"
+    echo "export APP_VERSION=\"${APP_VERSION}\"" >> "$CONFIG_FILE"
   fi
   echo "Config file '${CONFIG_FILE}' has been created."
 else
-  . $CONFIG_FILE
+  # shellcheck source=/dev/null
+  . "$CONFIG_FILE"
 fi
 
 #
@@ -59,24 +60,25 @@ fi
 #
 ENV_FILE=$TEST_HOME/.env
 if [ -z "$BROWSER_STACK_USERNAME" ] || [ -z "$BROWSER_STACK_ACCESS_KEY" ]; then
-  [ -f $ENV_FILE ] && . $ENV_FILE
+  # shellcheck source=/dev/null
+  [ -f "$ENV_FILE" ] && . "$ENV_FILE"
   if [ -z "$BROWSER_STACK_USERNAME" ] || [ -z "$BROWSER_STACK_ACCESS_KEY" ]; then
     echo "Environment variables for connecting to Browser Stack are not set."
-    while [[ -z "$IF_CREATE_ENV_FILE" ]] || ([[ "$IF_CREATE_ENV_FILE" != "yes" ]] && [[ "$IF_CREATE_ENV_FILE" != "no" ]]); do
-      read -p "Do you want to create .env file? (yes|no): " IF_CREATE_ENV_FILE
+    while [[ -z "$IF_CREATE_ENV_FILE" ]] || { [[ "$IF_CREATE_ENV_FILE" != "yes" ]] && [[ "$IF_CREATE_ENV_FILE" != "no" ]]; }; do
+      read -rp "Do you want to create .env file? (yes|no): " IF_CREATE_ENV_FILE
     done
     if [[ "$IF_CREATE_ENV_FILE" == "yes" ]]; then
       [ "$TARGET_TYPE" == "web" ] && BS_AUTOMATE="Automate"
       [ "$TARGET_TYPE" == "app" ] && BS_AUTOMATE="App Automate"
       echo "Find out your access key of $BS_AUTOMATE on 'https://www.browserstack.com/accounts/settings'."
       while [[ -z "$BROWSER_STACK_USERNAME" ]]; do
-        read -p "Browser Stack Username: " BROWSER_STACK_USERNAME
+        read -rp "Browser Stack Username: " BROWSER_STACK_USERNAME
       done
       while [[ -z "$BROWSER_STACK_ACCESS_KEY" ]]; do
-        read -p "Browser Stack Access Key: " BROWSER_STACK_ACCESS_KEY
+        read -rp "Browser Stack Access Key: " BROWSER_STACK_ACCESS_KEY
       done
-      echo "export BROWSER_STACK_USERNAME=\"${BROWSER_STACK_USERNAME}\"" >> $ENV_FILE
-      echo "export BROWSER_STACK_ACCESS_KEY=\"${BROWSER_STACK_ACCESS_KEY}\"" >> $ENV_FILE
+      echo "export BROWSER_STACK_USERNAME=\"${BROWSER_STACK_USERNAME}\"" >> "$ENV_FILE"
+      echo "export BROWSER_STACK_ACCESS_KEY=\"${BROWSER_STACK_ACCESS_KEY}\"" >> "$ENV_FILE"
       echo ".env file has been created. Please make sure .env is written on .gitignore."
     fi
   fi
@@ -87,11 +89,11 @@ fi
 #
 if [ "$TARGET_TYPE" == "web" ]; then
   UA_FILE=$TEST_HOME/ua.csv
-  if [ ! -f $UA_FILE ]; then
+  if [ ! -f "$UA_FILE" ]; then
     if [ -z "$BROWSER_STACK_USERNAME" ] || [ -z "$BROWSER_STACK_ACCESS_KEY" ]; then
       echo "Empty ua.csv file is created. Please put your testing user agents into the file by yourself."
     else
-      $BIN_DIR/list_uas > $UA_FILE
+      "$BIN_DIR/list_uas" > "$UA_FILE"
       echo "Full available user agens list on ua.csv, but they are tooo much for sure. Please eliminate unnecessary agents from file."
     fi
   fi
@@ -102,11 +104,11 @@ fi
 #
 if [ "$TARGET_TYPE" == "app" ]; then
   DEVICE_FILE=$TEST_HOME/device.csv
-  if [ ! -f $DEVICE_FILE ]; then
+  if [ ! -f "$DEVICE_FILE" ]; then
     if [ -z "$BROWSER_STACK_USERNAME" ] || [ -z "$BROWSER_STACK_ACCESS_KEY" ]; then
       echo "Empty device.csv file is created. Please put your testing devices into the file by yourself."
     else
-      $BIN_DIR/list_devices > $DEVICE_FILE
+      "$BIN_DIR/list_devices" > "$DEVICE_FILE"
       echo "Full available devices list on device.csv, but they are tooo much for sure. Please eliminate unnecessary devices from file."
     fi
   fi
