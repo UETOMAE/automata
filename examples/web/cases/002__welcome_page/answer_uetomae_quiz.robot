@@ -8,6 +8,7 @@ Test Template   Answer uetomae quiz ${answer}, given message should be ${message
 Answer uetomae quiz ${answer}, given message should be ${message}
     Select Radio Button  uetomae-quiz  ${answer}
     Click Button  answer-button
+    Capture Page Screenshot  filename=ss-answer-quiz-${answer}.png
     Element Text Should Be  uetomae-quiz-answer  ${message}
 
 *** Test Cases ***

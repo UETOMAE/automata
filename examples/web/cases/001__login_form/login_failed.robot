@@ -19,6 +19,7 @@ Invalid email and password are filled
 
 Login error message should be
     [Arguments]  ${message}
+    Capture Page Screenshot  filename=ss-login-error{index}.png
     Element Text Should Be  error-message  ${message}
 
 *** Test Cases ***
