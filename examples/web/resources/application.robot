@@ -7,6 +7,7 @@ ${APP_URL}  http://app/
 *** Keywords ***
 Login page is open
     Open Automata Browser  ${APP_URL}
+    Maximize Automata Browser
     Wait Until Page Contains  Login
 
 Login email and password are filled as
