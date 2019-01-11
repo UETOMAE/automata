@@ -1,0 +1,10 @@
+---
+version: '2'
+
+services:
+  automata:
+    image: uetomae/automata-stage:latest
+    network_mode: host
+    volumes:
+      - .:/var/autotest/test
+      - ../..:/var/autotest/automata

@@ -78,25 +78,11 @@ teardown() {
   [ "$output" = "TARGET_TYPE should be 'web' or 'app'." ]
 }
 
-@test "missing APP_NAME in config file" {
-  sed -i '/^export APP_NAME/d' config
+@test "missing APPLICATION_ID in config file" {
+  sed -i '/^export APPLICATION_ID/d' config
   run run_test
   [ "$status" -eq 1 ]
-  [ "$output" = "Missing mandatory environment variable APP_NAME." ]
-}
-
-@test "missing APP_VERSION in config file" {
-  sed -i '/^export APP_VERSION/d' config
-  run run_test
-  [ "$status" -eq 1 ]
-  [ "$output" = "Missing mandatory environment variable APP_VERSION." ]
-}
-
-@test "invalid APP_NAME and APP_VERSION in config file" {
-  sed -i 's/export APP_NAME=test.ipa/export APP_NAME=invalid.ipa/g' config
-  run run_test
-  [ "$status" -eq 1 ]
-  [ "$output" = "Application 'invalid.ipa 1.0' has not been uploaded to browserstack yet." ]
+  [ "$output" = "Missing mandatory environment variable APPLICATION_ID." ]
 }
 
 @test "missing .env file" {
