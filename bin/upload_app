@@ -10,7 +10,9 @@ if [ $# -ne 1 ]; then
 fi
 UPLOAD_FILE=$1
 
+# shellcheck disable=SC2034
 SKIP_TEST_DEVICE=yes
+# shellcheck disable=SC2034
 SKIP_TEST_APP=yes
 
 # shellcheck source=/dev/null
