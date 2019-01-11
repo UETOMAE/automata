@@ -58,8 +58,7 @@ setup_env_for_app() {
   # config
   echo "export PROJECT_NAME=automata_test" > config
   echo "export TARGET_TYPE=app" >> config
-  echo "export APP_NAME=test.ipa" >> config
-  echo "export APP_VERSION=1.0" >> config
+  echo "export APPLICATION_ID=test_app" >> config
   # .env
   setup_dot_env
   # directories
