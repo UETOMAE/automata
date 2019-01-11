@@ -1,0 +1,19 @@
+#!/bin/bash
+
+BIN_DIR=$(cd "$(dirname "$0")" && pwd)
+TEST_ROOT=$(pwd)
+export TEST_ROOT
+
+if [ $# -ne 1 ]; then
+  echo "Usage: $(basename "$0") PATH_TO_UPLOAD_APP"
+  exit 1
+fi
+UPLOAD_FILE=$1
+
+SKIP_TEST_DEVICE=yes
+SKIP_TEST_APP=yes
+
+# shellcheck source=/dev/null
+. "$BIN_DIR/test_automata_env"
+
+curl -u "${BROWSER_STACK_USERNAME}:${BROWSER_STACK_ACCESS_KEY}" -X POST https://api-cloud.browserstack.com/app-automate/upload -F "file=@${UPLOAD_FILE}" -F "data={\"custom_id\": \"${APPLICATION_ID}\"}"

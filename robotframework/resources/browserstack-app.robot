@@ -7,6 +7,6 @@ Open Automata Application
   Open Application  ${BROWSER_STACK_URL}
   ...               platformName=%{OS}  platformVersion=%{OS_VERSION}
   ...               deviceName=%{DEVICE}
-  ...               app=%{APP_URL}
+  ...               app=%{APPLICATION_ID}
   ...               unicodeKeyboard=true      newCommandTimeout=10000   autoGrantPermissions=true
   ...               build=%{BROWSER_STACK_BUILD_NAME}  name=${case_name}

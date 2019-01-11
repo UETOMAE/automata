@@ -41,12 +41,8 @@ if [ -n "$BROWSER_STACK_LOCAL" ]; then
   fi
 fi
 if [ "$TARGET_TYPE" = "app" ]; then
-  if [ -z "$APP_NAME" ]; then
-    echo "Missing mandatory environment variable APP_NAME."
-    exit 1
-  fi
-  if [ -z "$APP_VERSION" ]; then
-    echo "Missing mandatory environment variable APP_VERSION."
+  if [ -z "$APPLICATION_ID" ]; then
+    echo "Missing mandatory environment variable APPLICATION_ID."
     exit 1
   fi
 fi
@@ -101,11 +97,9 @@ fi
 #
 if [ "$TARGET_TYPE" = "web" ]; then
   # shellcheck source=/dev/null
-  . "$BIN_DIR/test_automata_env_ua"
+  [ -z "$SKIP_TEST_UA" ] && . "$BIN_DIR/test_automata_env_ua"
 fi
 if [ "$TARGET_TYPE" = "app" ]; then
   # shellcheck source=/dev/null
-  . "$BIN_DIR/test_automata_env_device"
-  # shellcheck source=/dev/null
-  . "$BIN_DIR/test_automata_env_apps"
+  [ -z "$SKIP_TEST_DEVICE" ] && . "$BIN_DIR/test_automata_env_device"
 fi
