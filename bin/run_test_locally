@@ -37,6 +37,25 @@ TARGET_CASE=( "$TEST_CASES" )
 [ $# -ne 0 ] && TARGET_CASE=( "$@" )
 
 #
+# Detect environment variables for appium
+#
+if [ "$TARGET_TYPE" = "app" ]; then
+  [ -z "$APPIUM_URL" ] && export APPIUM_URL="http://localhost:4723/wd/hub"
+  if [ -z "$APPIUM_OS" ]; then
+    echo "The environment variable 'APPIUM_OS' hove to be set in .env file or anywhere."
+    exit 1
+  fi
+  if [ -z "$APPIUM_OS_VERSION" ]; then
+    echo "The environment variable 'APPIUM_OS_VERSION' hove to be set in .env file or anywhere."
+    exit 1
+  fi
+  if [ -z "$APPIUM_DEVICE" ]; then
+    echo "The environment variable 'APPIUM_DEVICE' hove to be set in .env file or anywhere."
+    exit 1
+  fi
+fi
+
+#
 # Detect if script is running on docker container
 #
 export RUN_ON_DOCKER=false
