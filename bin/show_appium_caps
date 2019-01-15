@@ -1,0 +1,32 @@
+#!/bin/bash
+
+BIN_DIR=$(cd "$(dirname "$0")" && pwd)
+TEST_ROOT=$(pwd)
+export TEST_ROOT
+
+TARGET_DEVICE_ROW=1
+if [ $# -gt 1 ]; then
+  echo "Usage: $(basename "$0") [TARGET_DEVICE_ROW=1]"
+  exit 1
+fi
+[ $# -gt 0 ] && TARGET_DEVICE_ROW=$1
+
+# shellcheck source=/dev/null
+. "$BIN_DIR/test_automata_env"
+
+# resolve target device
+if [ "${#DEVICE_OS[@]}" -lt "$TARGET_DEVICE_ROW" ]; then
+  echo "Target row '${TARGET_DEVICE_ROW}' is larger than the number of your devices list '${#DEVICE_OS[@]}'."
+  exit 1
+fi
+TARGET_INX=$((TARGET_DEVICE_ROW-1))
+OS=${DEVICE_OS[$TARGET_INX]}
+OS_VERSION=${DEVICE_OS_VERSION[$TARGET_INX]}
+DEVICE=${DEVICE_NAME[$TARGET_INX]}
+echo "{"
+echo "  \"platformName\": \"${OS}\","
+echo "  \"platformVersion\": \"${OS_VERSION}\","
+echo "  \"deviceName\": \"${DEVICE}\","
+echo "  \"automationName\": \"XCUITest\","
+echo "  \"app\": \"${APPLICATION_ID}\""
+echo "}"
