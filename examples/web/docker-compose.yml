@@ -3,7 +3,7 @@ version: '2'
 
 services:
   automata:
-    image: uetomae/automata-stage:latest
+    image: automata-stage:develop
     volumes:
       - .:/var/autotest/test
       - ../..:/var/autotest/automata

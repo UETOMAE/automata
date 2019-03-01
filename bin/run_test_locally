@@ -70,6 +70,7 @@ if [ "$RUN_ON_DOCKER" = "true" ]; then
   Xvfb :99 -ac -screen 0 "${SCREEN_WIDTH}x${SCREEN_HEIGHT}x${SCREEN_COLOR_DEPTH}" &
   export DISPLAY=:99
 fi
+LISTENER="$LIB_DIR/practitest_robot_listener.py"
 OUTPUT_DIR="$TEST_RESULTS/local-$(date "+%s")"
 [ -z "$AUTOMATA_BIN_ROBOT" ] && AUTOMATA_BIN_ROBOT=robot
-$AUTOMATA_BIN_ROBOT --outputdir "$OUTPUT_DIR" "${TARGET_CASE[@]}"
+$AUTOMATA_BIN_ROBOT --outputdir "$OUTPUT_DIR" --listener "$LISTENER" "${TARGET_CASE[@]}"
