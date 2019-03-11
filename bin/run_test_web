@@ -84,7 +84,9 @@ for ((i=0; i<${#UA_OS[@]}; i++)) {
   echo "  UAID:       ${UA_ID}"
   echo "  Build Name: ${BROWSER_STACK_BUILD_NAME}"
   [ -z "$AUTOMATA_BIN_ROBOT" ] && AUTOMATA_BIN_ROBOT=robot
-  if ! $AUTOMATA_BIN_ROBOT --outputdir "$BUILD_RESULTS" "${TARGET_CASE[@]}"
+  LISTENER="$LIB_DIR/robot_listener.py"
+  MODIFIER="$LIB_DIR/robot_modifier.py"
+  if ! $AUTOMATA_BIN_ROBOT --outputdir "$BUILD_RESULTS" --listener "$LISTENER" --prerunmodifier "$MODIFIER" "${TARGET_CASE[@]}"
   then
     RET_CODE=1
   fi

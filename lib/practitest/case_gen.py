@@ -37,6 +37,25 @@ def generate_skelton_case(data):
         for test_step in test_steps['data']:
             f.write("    %s\n" % (test_step['attributes']['name']))
 
+def generate_test_set(test_ids):
+    data_json = json.dumps({'data': {
+        'instances': {'test-ids': test_ids},
+        'attributes': {
+            'name': 'Automata Runs'
+            }
+        }})
+    print data_json
+    url = 'https://api.practitest.com/api/v2/projects/%s/sets.json' % (project_id)
+    r = requests.post(url,
+            data=data_json,
+            auth=(api_email, api_token),
+            headers={'Content-type': 'application/json'})
+    print r.status_code
+    print r.text
+
 cases_data = get_test_cases()
+test_ids = []
 for case_data in cases_data['data']:
     generate_skelton_case(case_data)
+    test_ids.append(case_data['id'])
+generate_test_set(test_ids)

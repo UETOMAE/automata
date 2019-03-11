@@ -27,3 +27,6 @@ Login as valid user
     Login page is open
     Valid email and password are filled
     Login form are submitted
+
+Open browser and go to top page
+    Login page is open

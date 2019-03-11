@@ -4,4 +4,5 @@ export LOCAL_MODE=true
 BIN_DIR=$(cd "$(dirname "$0")" && pwd)
 # shellcheck source=/dev/null
 . "$BIN_DIR/test_automata_env"
-python "$LIB_DIR/practitest_case_gen.py"
+#python "$LIB_DIR/practitest/case_gen.py"
+python "$LIB_DIR/practitest/prepare_testsets.py"
