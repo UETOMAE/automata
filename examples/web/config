@@ -1,6 +1,0 @@
-export PROJECT_NAME="Uetomae Automata Example 1"
-export TARGET_TYPE="web"
-export BROWSER_STACK_LOCAL=true
-
-export USE_PRACTITEST=yes
-export PRACTITEST_PROJECT_ID=11518

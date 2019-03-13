@@ -6,25 +6,19 @@
 exit_with_usage() {
   echo "basename $0"
   echo "    -u  Specify target UserAgent ID"
+  echo "    -m  Integrate with test management tool"
   exit
 }
-
-#
-#
-# Prepare and validate test environment
-#
-export LOCAL_MODE=true
-BIN_DIR=$(cd "$(dirname "$0")" && pwd)
-# shellcheck source=/dev/null
-. "$BIN_DIR/test_automata_env"
 
 #
 # Parse options
 #
 export BROWSER=chrome
-while getopts "b:h" OPT; do
+while getopts "b:mh" OPT; do
   case $OPT in
     b)  export BROWSER=$OPTARG
+        ;;
+    m)  export INTEGRATE_TEST_MANAGEMENT_TOOL=yes
         ;;
     h)  exit_with_usage
         ;;
@@ -35,6 +29,14 @@ done
 shift $((OPTIND - 1))
 TARGET_CASE=( "$TEST_CASES" )
 [ $# -ne 0 ] && TARGET_CASE=( "$@" )
+
+#
+# Prepare and validate test environment
+#
+export LOCAL_MODE=true
+BIN_DIR=$(cd "$(dirname "$0")" && pwd)
+# shellcheck source=/dev/null
+. "$BIN_DIR/test_automata_env"
 
 #
 # Detect environment variables for appium
@@ -70,8 +72,20 @@ if [ "$RUN_ON_DOCKER" = "true" ]; then
   Xvfb :99 -ac -screen 0 "${SCREEN_WIDTH}x${SCREEN_HEIGHT}x${SCREEN_COLOR_DEPTH}" &
   export DISPLAY=:99
 fi
-LISTENER="$LIB_DIR/practitest/robot_listener.py"
-MODIFIER="$LIB_DIR/practitest/robot_modifier.py"
+ARGS=()
 OUTPUT_DIR="$TEST_RESULTS/local-$(date "+%s")"
+ARGS=("${ARGS[@]}" "--outputdir" "$OUTPUT_DIR")
+if [ "$INTEGRATE_TEST_MANAGEMENT_TOOL" == "yes" ]; then
+  if [ "$TEST_MANAGEMENT_TOOL" == "practitest" ]; then
+    if ! python "$LIB_DIR/practi_validate.py" "$PRACTITEST_TARGET_TEST_SET_ID"
+    then
+      exit 1
+    fi
+    LISTENER="$LIB_DIR/robot_listener.py"
+    MODIFIER="$LIB_DIR/robot_modifier.py"
+    ARGS=("${ARGS[@]}" "--listener" "$LISTENER" "--prerunmodifier" "$MODIFIER")
+  fi
+fi
+ARGS=("${ARGS[@]}" "${TARGET_CASE[@]}")
 [ -z "$AUTOMATA_BIN_ROBOT" ] && AUTOMATA_BIN_ROBOT=robot
-$AUTOMATA_BIN_ROBOT --outputdir "$OUTPUT_DIR" --listener "$LISTENER" --prerunmodifier "$MODIFIER" "${TARGET_CASE[@]}"
+"$AUTOMATA_BIN_ROBOT" "${ARGS[@]}"

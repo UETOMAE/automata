@@ -9,6 +9,18 @@ class PractiProject:
         self.project_id = os.environ['PRACTITEST_PROJECT_ID'] if project_id is None else project_id
         self.api_email = os.environ['PRACTITEST_EMAIL'] if api_email is None else api_email
         self.api_token = os.environ['PRACTITEST_TOKEN'] if api_token is None else api_token
+
+    def validate(self):
+        found_project = False
+        for project_data in self.projects():
+            for prj in project_data['data']:
+                if prj['id'] == self.project_id:
+                    found_project = True
+                    break
+        if found_project == False:
+            print "Project ID '" + self.project_id + "' does not exist."
+            return False
+        return True
     
     def get_info(self, endpoint, prms={}):
         page_number = 1
@@ -26,6 +38,11 @@ class PractiProject:
                 auth=(self.api_email, self.api_token),
                 headers={'Content-type': 'application/json'})
         return json.loads(r.text)
+
+    def projects(self, prms={}):
+        url = 'https://api.practitest.com/api/v2/projects.json'
+        for data in self.get_info(url, prms):
+            yield(data)
 
     def test_cases(self, prms={}):
         url = 'https://api.practitest.com/api/v2/projects/%s/tests.json' % (self.project_id)
@@ -91,6 +108,7 @@ class PractiProject:
                     },
                 'instances': {'test-ids': self.get_test_ids(base_set)}
                 }})
+            ua_set = self.test_set_by_name(name)
         return ua_set
 
     def test_set_by_display_id(self, id):
@@ -100,4 +118,28 @@ class PractiProject:
         return self.test_set({'name_exact': name})
 
     def get_test_set_name(self, basename, os, os_version, browser, browser_version):
-        return '%s (%s%s, %s%s)' % (basename, os, os_version, browser, browser_version)
+        if os is None:
+            ret = basename
+        else:
+            ret = '%s (%s %s, %s %s)' % (basename, os, os_version, browser, browser_version)
+        return ret
+
+    def get_test_cases_by_set(self, test_set):
+        ret = {}
+        test_ids = self.get_test_ids(test_set)
+        test_id_list = ','.join(map(str, test_ids))
+        test_cases = {}
+        for case_data in self.test_cases({'test-ids': test_id_list}):
+            for case in case_data['data']:
+                test_cases[case['id']] = case
+        for step_data in self.test_steps({'test-ids': test_id_list}):
+            for step in step_data['data']:
+                step_attr = step['attributes']
+                case_id = str(step_attr['test-id'])
+                test_case = test_cases[case_id]
+                case_attr = test_case['attributes']
+                display_id = str(case_attr['display-id'])
+                if not display_id in ret.keys():
+                    ret[display_id] = {'data': test_case, 'steps': []}
+                ret[display_id]['steps'].append(step)
+        return ret

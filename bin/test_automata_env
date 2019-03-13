@@ -103,3 +103,22 @@ if [ "$TARGET_TYPE" = "app" ]; then
   # shellcheck source=/dev/null
   [ -z "$SKIP_TEST_DEVICE" ] && . "$BIN_DIR/test_automata_env_device"
 fi
+
+#
+# Check integration
+#
+if [ "$INTEGRATE_TEST_MANAGEMENT_TOOL" == "yes" ]; then
+  if [ -z "$TEST_MANAGEMENT_TOOL" ]; then
+    echo "You have to specify environment variable TEST_MANAGEMENT_TOOL for integration."
+    exit 1
+  fi
+  if [ "$TEST_MANAGEMENT_TOOL" == "practitest" ]; then
+    if [ -z "$PRACTITEST_PROJECT_ID" ]; then
+      echo "You have to specify environment variable PRACTITEST_PROJECT_ID."
+      exit 1
+    fi
+  else
+    echo "Unknown integration tool name '$TEST_MANAGEMENT_TOOL'."
+    exit 1
+  fi
+fi

@@ -23,7 +23,6 @@ class BsBuild:
         builds_info = self.get_api_data('/builds.json')
         for build_info in builds_info:
             build_name = build_info['automation_build']['name']
-            print "BUILD_NAME: " + build_name
             if self.build_name == build_name:
                 self.build_id = build_info['automation_build']['hashed_id']
                 break
