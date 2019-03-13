@@ -1,0 +1,18 @@
+---
+version: '2'
+
+services:
+  automata:
+    image: uetomae/automata-stage:latest
+    volumes:
+      - .:/var/autotest/test
+      - ../..:/var/autotest/automata
+    links:
+      - app
+
+  app:
+    image: nginx:alpine
+    ports:
+      - "20924:80"
+    volumes:
+      - ./data/www:/usr/share/nginx/html
