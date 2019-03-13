@@ -6,15 +6,18 @@
 exit_with_usage() {
   echo "basename $0"
   echo "    -u  Specify target UserAgent ID"
+  echo "    -m  Integrate with test management tool"
   exit
 }
 
 #
 # Parse options
 #
-while getopts "u:h" OPT; do
+while getopts "u:mh" OPT; do
   case $OPT in
     u)  TARGET_UA=$OPTARG
+        ;;
+    m)  export INTEGRATE_TEST_MANAGEMENT_TOOL=yes
         ;;
     h)  exit_with_usage
         ;;
@@ -83,8 +86,22 @@ for ((i=0; i<${#UA_OS[@]}; i++)) {
   echo "  Browser:    ${BROWSER} ${BROWSER_VERSION}"
   echo "  UAID:       ${UA_ID}"
   echo "  Build Name: ${BROWSER_STACK_BUILD_NAME}"
+  ARGS=()
+  ARGS=("${ARGS[@]}" "--outputdir" "$BUILD_RESULTS")
+  if [ "$INTEGRATE_TEST_MANAGEMENT_TOOL" == "yes" ]; then
+    if [ "$TEST_MANAGEMENT_TOOL" == "practitest" ]; then
+      if ! python "$LIB_DIR/practi_validate.py" "$PRACTITEST_TARGET_TEST_SET_ID"
+      then
+        exit 1
+      fi
+      LISTENER="$LIB_DIR/robot_listener.py"
+      MODIFIER="$LIB_DIR/robot_modifier.py"
+      ARGS=("${ARGS[@]}" "--listener" "$LISTENER" "--prerunmodifier" "$MODIFIER")
+    fi
+  fi
+  ARGS=("${ARGS[@]}" "${TARGET_CASE[@]}")
   [ -z "$AUTOMATA_BIN_ROBOT" ] && AUTOMATA_BIN_ROBOT=robot
-  if ! $AUTOMATA_BIN_ROBOT --outputdir "$BUILD_RESULTS" "${TARGET_CASE[@]}"
+  if ! "$AUTOMATA_BIN_ROBOT" "${ARGS[@]}"
   then
     RET_CODE=1
   fi

@@ -1,3 +1,6 @@
 .env
+*.pyc
+*~
+*.bak
 /examples/**/results/*
 /examples/**/tmp/*

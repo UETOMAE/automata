@@ -1,0 +1,48 @@
+#!/bin/bash
+
+#
+# Usage
+#
+exit_with_usage() {
+  echo "basename $0"
+  echo "    -y  All existing cases will be overwritten"
+  echo "    -n  All existing cases will be skipped"
+  exit
+}
+
+export INTEGRATE_TEST_MANAGEMENT_TOOL=yes
+export LOCAL_MODE=true
+BIN_DIR=$(cd "$(dirname "$0")" && pwd)
+# shellcheck source=/dev/null
+. "$BIN_DIR/test_automata_env"
+
+#
+# Parse options
+#
+SKIP_ANSWER=""
+while getopts "ynh" OPT; do
+  case $OPT in
+    y)  SKIP_ANSWER="all yes"
+        ;;
+    n)  SKIP_ANSWER="all no"
+        ;;
+    h)  exit_with_usage
+        ;;
+    \?) exit_with_usage
+        ;;
+  esac
+done
+shift $((OPTIND - 1))
+
+#
+# Generate test cases
+#
+if [ "$INTEGRATE_TEST_MANAGEMENT_TOOL" == "yes" ]; then
+  if [ "$TEST_MANAGEMENT_TOOL" == "practitest" ]; then
+    if [ -z "$PRACTITEST_TARGET_TEST_SET_ID" ]; then
+      echo "The environment variable 'PRACTITEST_TARGET_TEST_SET_ID' have to be set in config to specify test set display id."
+      exit 1
+    fi
+  fi
+fi
+python "$LIB_DIR/practi_generate_cases.py" "$(pwd)/cases" "$PRACTITEST_TARGET_TEST_SET_ID" "$SKIP_ANSWER"

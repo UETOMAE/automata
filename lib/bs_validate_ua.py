@@ -7,6 +7,15 @@ import csv
 bs_username = os.environ['BROWSER_STACK_USERNAME']
 bs_access_key = os.environ['BROWSER_STACK_ACCESS_KEY']
 
+if os.getenv('BROWSER_STACK_SKIP_UA_VALIDATION', "no") == "yes":
+    argv_csv = csv.reader([sys.argv[1]])
+    argv = list(argv_csv)[0]
+    print argv[0].strip()
+    print argv[1].strip()
+    print argv[2].strip()
+    print argv[3].strip()
+    exit (0)
+
 argv_csv = csv.reader([sys.argv[1].upper()])
 argv = list(argv_csv)[0]
 arg_os = argv[0].strip()
