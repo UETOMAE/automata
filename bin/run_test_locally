@@ -74,6 +74,10 @@ if [ "$RUN_ON_DOCKER" = "true" ]; then
 fi
 ARGS=()
 OUTPUT_DIR="$TEST_RESULTS/local-$(date "+%s")"
+export BUILD_RESULTS="$OUTPUT_DIR"
+export BUILD_TMP="$BUILD_RESULTS/tmp"
+mkdir -p "$BUILD_RESULTS"
+mkdir -p "$BUILD_TMP"
 ARGS=("${ARGS[@]}" "--outputdir" "$OUTPUT_DIR")
 if [ "$INTEGRATE_TEST_MANAGEMENT_TOOL" == "yes" ]; then
   if [ "$TEST_MANAGEMENT_TOOL" == "practitest" ]; then

@@ -75,8 +75,10 @@ for ((i=0; i<${#UA_OS[@]}; i++)) {
   # 
   BROWSER_STACK_BUILD_NAME="${PROJECT_NAME}__${OS} ${OS_VERSION}_${BROWSER} ${BROWSER_VERSION}__$(env LC_CTYPE=C < /dev/urandom tr -cd 'a-f0-9' | head -c 8)"
   export BROWSER_STACK_BUILD_NAME
-  BUILD_RESULTS="$TEST_RESULTS/$BROWSER_STACK_BUILD_NAME"
+  export BUILD_RESULTS="$TEST_RESULTS/$BROWSER_STACK_BUILD_NAME"
+  export BUILD_TMP="$BUILD_RESULTS/tmp"
   mkdir -p "$BUILD_RESULTS"
+  mkdir -p "$BUILD_TMP"
   #
   # Run test
   #
